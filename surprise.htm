@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rebecca's World</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 50px 20px;
+            background: rgba(225, 44, 44, 0.95);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .main-title {
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff6b9d, #c44569, #ff9ff3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px #ff6b9d); }
+            to { filter: drop-shadow(0 0 20px #c44569); }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #666;
+            font-weight: 300;
+        }
+
+        .slideshow-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transition: all 0.5s ease;
+        }
+
+        .slide.active {
+            display: block;
+            animation: slideIn 1s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .slide-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.9);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .slide-nav:hover {
+            background: #ff6b9d;
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .prev { left: 20px; }
+        .next { right: 20px; }
+
+        .dots-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .dot {
+            height: 15px;
+            width: 15px;
+            margin: 0 5px;
+            background-color: rgba(255,107,157,0.5);
+            border-radius: 50%;
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active, .dot:hover {
+            background-color: #ff6b9d;
+            transform: scale(1.2);
+        }
+
+        .games-section {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 40px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: #c44569;
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+
+        .quiz-container {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 15px 20px;
+            background: white;
+            border: 2px solid #ff6b9d;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: #ff6b9d;
+            color: white;
+            transform: translateX(10px);
+        }
+
+        .option.correct {
+            background: #4ecdc4;
+            border-color: #26a69a;
+        }
+
+        .option.incorrect {
+            background: #ff6b9d;
+            border-color: #c44569;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #ff6b9d, #c44569);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(255,107,157,0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255,107,157,0.6);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .score {
+            font-size: 3rem;
+            color: #ff6b9d;
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+
+        .prize-section {
+            display: none;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 25px;
+            margin: 40px 0;
+            animation: prizePop 1s ease;
+        }
+
+        @keyframes prizePop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .prize-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .prize-message {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .heart {
+            font-size: 4rem;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.3); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.3); }
+            70% { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .main-title { font-size: 3rem; }
+            .slide { height: 300px; }
+            .games-section { margin: 20px; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 class="main-title">Rebecca's World</h1>
+        <p class="subtitle">Only for my sweetheart rebeccaaaa my LOVEEEEEE <333333 ✨</p>
+    </header>
+
+    <div class="slideshow-container">
+        <!-- Replace these image URLs with your actual photos -->
+        <img src="Pic1.jpeg" alt="Photo 1" class="slide active">
+        <img src="Pic2.jpeg" alt="Photo 2" class="slide">
+        <img src="Pic3.jpeg" alt="Photo 3" class="slide">
+        <img src="Pic4.jpeg" alt="Photo 4" class="slide">
+        
+        <button class="slide-nav prev" onclick="changeSlide(-1)">❮</button>
+        <button class="slide-nav next" onclick="changeSlide(1)">❯</button>
+        
+        <div class="dots-container">
+            <span class="dot active" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+            <span class="dot" onclick="currentSlide(4)"></span>
+        </div>
+    </div>
+
+    <section class="games-section">
+        <h2 class="section-title">💕 Quiz Time Rebuuuuu ! 💕</h2>
+        
+        <div class="quiz-container">
+            <div id="quiz">
+                <div class="question" id="question1">
+                    <h3>1. What is my favorite color?</h3>
+                    <div class="options">
+                        <div class="option" data-question="1" data-answer="0">Rebecca's Black 💕</div>
+                        <div class="option" data-question="1" data-answer="1">Blue 🔵</div>
+                        <div class="option" data-question="1" data-answer="2">Purple 💜</div>
+                    </div>
+                </div>
+
+                <div class="question" id="question2" style="display: none;">
+                    <h3>2. What does Aman love the most?</h3>
+                    <div class="options">
+                        <div class="option" data-question="2" data-answer="0">You! ❤️</div>
+                        <div class="option" data-question="2" data-answer="1">Chocolate 🍫</div>
+                        <div class="option" data-question="2" data-answer="2">Traveling ✈️</div>
+                    </div>
+                </div>
+
+                <div class="question" id="question3" style="display: none;">
+                    <h3>3. What's Rebecca's dream date?</h3>
+                    <div class="options">
+                        <div class="option" data-question="3" data-answer="0">Cuddling at home 🏠</div>
+                        <div class="option" data-question="3" data-answer="1">Fancy dinner 🍽️</div>
+                        <div class="option" data-question="3" data-answer="2">Beach sunset 🌅</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>Next Question ➡️</button>
+                <button class="btn" id="submitBtn" onclick="submitQuiz()" style="display: none;">Get Your Prize! 🎁</button>
+            </div>
+        </div>
+
+        <div class="result" id="result">
+            <div class="score" id="score"></div>
+            <p id="resultMessage"></p>
+            <button class="btn" onclick="restartQuiz()">Play Again 💖</button>
+        </div>
+    </section>
+
+    <div class="prize-section" id="prizeSection">
+        <div class="heart">💖</div>
+        <h2 class="prize-title">🎉 Congratulations! 🎉</h2>
+        <p class="prize-message">
+            You know Answers so well! Here's your special prize:<br>
+            <strong>"Forever & Always - Mai Humesha tere paas rhunga babyyyy I LOVEEE YOUUU " 💕</strong><br><br>
+            Rebecca's special message: <em>Jo MANGNA AAJ MAANGLENA YE SURPRISE HAI EXCEPT CRORES OF KISSES :)!"</em>
+        </p>
+        <div style="font-size: 1.5rem; margin-top: 20px;">
+            Download your certificate: <a href="heheheheheheheheheheheheh.pdf" style="color: #ffd700; text-decoration: none; font-weight: bold;">💕 YOUR CERTIFICATE  💕</a>
+        </div>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        let currentQuestion = 1;
+        let score = 0;
+        const totalQuestions = 3;
+
+        // Slideshow
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+        }
+
+        function changeSlide(direction) {
+            currentSlideIndex = (currentSlideIndex + direction + slides.length) % slides.length;
+            showSlide(currentSlideIndex);
+        }
+
+        function currentSlide(index) {
+            currentSlideIndex = index - 1;
+            showSlide(currentSlideIndex);
+        }
+
+        // Auto slideshow
+        setInterval(() => {
+            changeSlide(1);
+        }, 4000);
+
+        // Quiz functionality
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const questionNum = this.dataset.question;
+                const correctAnswer = this.dataset.answer;
+                
+                // Disable all options for this question
+                document.querySelectorAll(`[data-question="${questionNum}"]`).forEach(opt => {
+                    opt.style.pointerEvents = 'none';
+                    if (opt.dataset.answer == correctAnswer) {
+                        opt.classList.add('correct');
+                        if (this === opt) score++;
+                    } else {
+                        opt.classList.add('incorrect');
+                    }
+                });
+                
+                document.getElementById('nextBtn').disabled = false;
+            });
+        });
+
+        function nextQuestion() {
+            document.getElementById(`question${currentQuestion}`).style.display = 'none';
+            currentQuestion++;
+            
+            if (currentQuestion <= totalQuestions) {
+                document.getElementById(`question${currentQuestion}`).style.display = 'block';
+            } else {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+            
+            document.getElementById('nextBtn').disabled = true;
+        }
+
+        function submitQuiz() {
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            
+            const percentage = Math.round((score / totalQuestions) * 100);
+            document.getElementById('score').textContent = `${score}/${totalQuestions}`;
+            
+            let message = '';
+            if (percentage == 100) {
+                message = 'Perfect! You know Rebecca better than anyone! 💖';
+            } else if (percentage >= 66) {
+                message = 'Great job! Rebecca will be so happy! 😍';
+            } else {
+                message = 'Good effort! Keep loving and learning! 💕';
+            }
+            
+            document.getElementById('resultMessage').textContent = message;
+            
+            setTimeout(() => {
+                document.getElementById('prizeSection').style.display = 'block';
+            }, 1500);
+        }
+
+        function restartQuiz() {
+            currentQuestion = 1;
+            score = 0;
+            document.getElementById('quiz').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('prizeSection').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('submitBtn').style.display = 'none';
+            
+            // Reset questions
+            for (let i = 1; i <= totalQuestions; i++) {
+                document.getElementById(`question${i}`).style.display = i === 1 ? 'block' : 'none';
+                document.querySelectorAll(`[data-question="${i}"]`).forEach(opt => {
+                    opt.style.pointerEvents = 'auto';
+                    opt.classList.remove('correct', 'incorrect');
+                });
+            }
+            document.getElementById('nextBtn').disabled = true;
+        }
+    </script>
+</body>
+</html>
